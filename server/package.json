@@ -4,9 +4,11 @@
   "type": "module",
   "scripts": {
     "dev": "node --watch --env-file-if-exists=.env src/index.js",
-    "start": "node --env-file-if-exists=.env src/index.js"
+    "start": "node --env-file-if-exists=.env src/index.js",
+    "test": "node --test"
   },
   "dependencies": {
+    "csv-parse": "^7.0.3",
     "express": "^5.1.0"
   }
 }
