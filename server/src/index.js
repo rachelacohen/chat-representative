@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import express from 'express';
+import { createAppChatService } from './chat/setup.js';
 import { runWithActor } from './context.js';
 import * as store from './store.js';
 
@@ -46,6 +47,22 @@ app.get('/api/audit', requireAdmin, (req, res) => {
   res.json(store.listAudit({ entityType, entityId, limit: Number(limit) || 100 }));
 });
 
+const chat = createAppChatService();
+
+app.post('/api/chat', async (req, res) => {
+  const question = String(req.body?.question ?? '').trim();
+  if (!question) return res.status(400).json({ error: 'question is required' });
+  if (question.length > 2000) return res.status(400).json({ error: 'question is too long' });
+  try {
+    res.json(await chat.answer(question));
+  } catch (err) {
+    console.error('[chat] failed to answer', err);
+    res.status(500).json({ error: 'chat failed' });
+  }
+});
+
+app.get('/api/chat/log', requireAdmin, (req, res) => res.json(store.listChatLog({ limit: Number(req.query.limit) || 100 })));
+
 // In production, serve the built React app from the same server.
 const clientDist = path.resolve(import.meta.dirname, '../../client/dist');
 if (fs.existsSync(clientDist)) {
@@ -55,4 +72,7 @@ if (fs.existsSync(clientDist)) {
   );
 }
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(chat.model ? `Chat model: ${chat.model}` : 'Chat: no GEMINI_API_KEY, answering with safe templates only');
+});

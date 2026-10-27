@@ -68,6 +68,21 @@ export const RULES = {
   },
 };
 
+// Hebrew keyword patterns for reading the representative's question. A miss is safe: an
+// unrecognized intent gets the full facts file, and the model's own classification can only
+// escalate. The regulator list is deliberately wide (general.1).
+export const INTENT_PATTERNS = {
+  regulator: /רשות שוק ההון|שוק ההון|רגולטור|הממונה על|המפקח על|רשות הביטוח|רשות לשוק/,
+  cancel: /ביטול|לבטל|מבטל|לסגור את הפוליסה|לסיים את הפוליסה|להפסיק את הביטוח|לא רוצה (יותר )?את הביטוח|לעזוב/,
+  refund: /החזר|בחזרה|מה מגיע|כמה מגיע|יחזירו/,
+  claimPayment: /(מתי|כמה זמן|עד מתי)[^?.\n]*(תשולם|ישולם|יקבל|יגיע|הכסף|התשלום|לתשלום)|תשלום התביעה|(תשולם|ישולם)[^?.\n]*מתי/,
+  documents: /מסמכ|להגיש|אישורים|קבלות/,
+  claim: /תביע|ערעור|מעריך|שמאי|פיצוי/,
+  // The question is about a specific customer, so it needs a policy to answer.
+  aboutCustomer: /הלקוח|הלקוחה|המבוטח|שלו|שלה|פוליסה שלו|הפוליסה/,
+  products: { car: /רכב/, home: /דירה/, health: /בריאות/, travel: /נסיע/ },
+};
+
 // Hebrew keyword patterns the answer guard uses. They are heuristics: a miss on a good
 // answer only costs a fallback to the safe template, so they lean strict. Patterns with
 // the g flag are only used with matchAll.
@@ -83,10 +98,10 @@ export const GUARD_PATTERNS = {
   noFee: /(אין|בלי|ללא|לא יהיו|פטור מ)\s*דמי\s+ה?ביטול/,
   refundMention: /החזר/g,
   paymentWords: /ישולם|תשולם|יועבר|תשלום|הכסף/,
-  paymentUnknown: /לא ידוע|אין זמן|לא מוגדר|לא נקבע|אין מועד/,
+  paymentUnknown: /לא ידוע|אינו ידוע|אינה ידועה|אין זמן|אין פרק זמן|לא מוגדר|אינו מוגדר|לא נקבע|אין מועד|לא ניתן להתחייב/,
   claimStatusTalk: /שלב|מתי|ישולם|תשולם|תשלום|זמן/,
   claimAmountTopic: /תביע|פיצוי/,
-  negation: /לא|אין|אינ|אסור|אי אפשר/,
+  negation: /לא|אין|אינ|אסור|איסור|אי אפשר/,
   odds: [
     /סיכוי/g,
     /המלצ\S*\s+(?:של\s+)?המעריך|המעריך\s+(?:המליץ|ממליץ)/g,

@@ -25,5 +25,13 @@ export function createCsvRepository(filePath) {
       const wanted = normalizeName(name);
       return structuredClone(policies.filter((p) => p.customerName === wanted));
     },
+    // Policies whose customer's full name appears in free text, longest name first, so
+    // "דנה רוזן" wins over a shorter name inside it.
+    async findByNameInText(text) {
+      const haystack = normalizeName(text);
+      const names = [...new Set(policies.map((p) => p.customerName))].sort((a, b) => b.length - a.length);
+      const found = names.find((name) => name && haystack.includes(name));
+      return found ? structuredClone(policies.filter((p) => p.customerName === found)) : [];
+    },
   };
 }

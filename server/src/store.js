@@ -8,6 +8,9 @@ import { currentActor } from './context.js';
 const DATA_DIR = path.resolve(import.meta.dirname, '../data');
 const DB_FILE = path.join(DATA_DIR, 'db.json');
 const AUDIT_FILE = path.join(DATA_DIR, 'audit.jsonl');
+// Deliberately not audited: the chat log is a log table (questions, answers, guard decisions),
+// append-only, like the audit log itself. It holds no business data.
+const CHAT_LOG_FILE = path.join(DATA_DIR, 'chat-log.jsonl');
 
 // collection -> audited entityType. A collection missing here cannot be read or written.
 const AUDITED = { tasks: 'Task' };
@@ -93,14 +96,32 @@ export function remove(collection, id) {
   return true;
 }
 
-export function listAudit({ entityType, entityId, limit = 100 } = {}) {
-  if (!fs.existsSync(AUDIT_FILE)) return [];
+function readLog(file) {
+  if (!fs.existsSync(file)) return [];
   return fs
-    .readFileSync(AUDIT_FILE, 'utf8')
+    .readFileSync(file, 'utf8')
     .split('\n')
     .filter(Boolean)
-    .map((line) => JSON.parse(line))
+    .map((line) => JSON.parse(line));
+}
+
+export function listAudit({ entityType, entityId, limit = 100 } = {}) {
+  return readLog(AUDIT_FILE)
     .filter((e) => (!entityType || e.entityType === entityType) && (!entityId || e.entityId === entityId))
     .slice(-limit)
     .reverse();
+}
+
+export function appendChatLog(entry) {
+  const row = { id: randomUUID(), actorUserId: currentActor(), ...redact(entry), createdAt: new Date().toISOString() };
+  try {
+    fs.appendFileSync(CHAT_LOG_FILE, JSON.stringify(row) + '\n');
+  } catch (err) {
+    // Like the audit log, a failed log write must never fail the answer.
+    console.error('[chat-log] failed to write entry', err, row);
+  }
+}
+
+export function listChatLog({ limit = 100 } = {}) {
+  return readLog(CHAT_LOG_FILE).slice(-limit).reverse();
 }

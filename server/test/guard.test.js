@@ -120,6 +120,23 @@ test('a promised claim payment time is caught, and saying it is unknown passes',
   );
 });
 
+test('a real model draft on claim payment that was wrongly blocked now passes', async () => {
+  // Gemini's answer for 4428 during the stage-5 smoke test; "אינו ידוע" and "חל איסור" were missed.
+  expectPassed(
+    [
+      'מועד תשלום התביעה אינו ידוע ולא ניתן להתחייב על תאריך או זמנים.',
+      'לפי הנוהל אין פרק זמן מוגדר מראש לקבלת החלטה ולביצוע התשלום.',
+      'חלק מהנתונים כגון שלב הטיפול ותאריך הגשת התביעות חסרים במערכת.',
+      'אישור קבלה נשלח תוך 3 ימי עסקים ומעריך ממונה תוך 10 ימי עסקים מההגשה.',
+      'חל איסור להעריך את סיכויי האישור או לנקוב בסכומים.',
+      'המסמכים הנדרשים הם צילומי נזק, קבלות, ודוח שמאי לנזק מעל 10,000 ש"ח.',
+      'ניתן לערער על דחיית תביעה תוך 30 ימים מקבלת ההחלטה.',
+    ].join('\n'),
+    await factsFor('4428'),
+    { intent: 'claimPayment' },
+  );
+});
+
 test('claim odds, claim amounts and the appraiser recommendation are caught, refusals pass', async () => {
   const facts = await factsFor('4425');
   expectCaught('יש לך סיכוי טוב שהתביעה תאושר', facts, 'G-CLAIM-ODDS', { intent: 'claim' });

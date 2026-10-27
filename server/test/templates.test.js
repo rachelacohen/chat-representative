@@ -32,7 +32,9 @@ test('every line of every answer is Hebrew only and starts with a Hebrew letter'
     await answerFor('4401', 'unknown'),
     await answerFor('4403', 'cancel'),
     await answerFor('4428', 'unknown'),
-    ...Object.values(FIXED_ANSWERS).map((a) => (typeof a === 'function' ? a('9999') : a)),
+    ...Object.values(FIXED_ANSWERS).filter((a) => typeof a === 'string'),
+    FIXED_ANSWERS.notFound('9999'),
+    FIXED_ANSWERS.severalPolicies([{ policyId: '4418', product: 'car' }, { policyId: '4433', product: 'home' }]),
   ];
   for (const line of answers.flatMap((a) => a.split('\n'))) {
     assert.doesNotMatch(line, /[A-Za-z]/, line);

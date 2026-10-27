@@ -5,5 +5,10 @@ export function createApiRepository() {
   const notImplemented = async () => {
     throw new Error('POLICY_SOURCE=api is not implemented yet - the pilot reads the CSV export');
   };
-  return { getPolicy: notImplemented, getCustomerPolicies: notImplemented, findByCustomerName: notImplemented };
+  return {
+    getPolicy: notImplemented,
+    getCustomerPolicies: notImplemented,
+    findByCustomerName: notImplemented,
+    findByNameInText: notImplemented,
+  };
 }
