@@ -16,7 +16,13 @@ test('intent from free Hebrew phrasing', () => {
 });
 
 test('regulator mentions are caught in several phrasings', () => {
-  for (const q of ['הלקוח אומר שיתלונן ברשות שוק ההון', 'הוא מאיים לפנות לרגולטור', 'פנה לממונה על שוק ההון']) {
+  for (const q of [
+    'הלקוח אומר שיתלונן ברשות שוק ההון',
+    'הוא מאיים לפנות לרגולטור',
+    'פנה לממונה על שוק ההון',
+    'הלקוחה מאיימת לפנות לממונה על הביטוח',
+    'הלקוח אמר שיגיש תלונה על החברה במשרד האוצר',
+  ]) {
     assert.ok(mentionsRegulator(q), q);
   }
   assert.ok(!mentionsRegulator('הלקוח רוצה לבטל'));

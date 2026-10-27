@@ -10,7 +10,8 @@
     "build": "npm run build -w client",
     "start": "npm start -w server",
     "test": "npm test -w server",
-    "ask": "npm run ask -w server --"
+    "ask": "npm run ask -w server --",
+    "eval": "npm run eval -w server --"
   },
   "devDependencies": {
     "concurrently": "^9.2.0"

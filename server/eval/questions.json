@@ -1,0 +1,200 @@
+[
+  {
+    "id": "cancel-4471",
+    "category": "ביטול",
+    "question": "הלקוח 4471 רוצה לבטל, מה מגיע לו?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4471", "mustInclude": ["342"], "mustMatch": ["הערכ", "בכתב"] }
+  },
+  {
+    "id": "cancel-4418-multi",
+    "category": "ביטול",
+    "question": "אורן גבאי רוצה לבטל את פוליסת הרכב, מה חשוב להגיד לו?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4418", "mustInclude": ["474"], "mustMatch": ["הנח"] }
+  },
+  {
+    "id": "cancel-4421",
+    "category": "ביטול",
+    "question": "כמה יקבל בחזרה בעל פוליסה 4421 אם יבטל?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4421", "mustInclude": ["138"] }
+  },
+  {
+    "id": "cancel-4433",
+    "category": "ביטול",
+    "question": "הלקוח 4433 רוצה לסגור את הפוליסה",
+    "expect": { "sources": ["llm", "template"], "policyId": "4433", "mustInclude": ["216"], "mustMatch": ["הנח"] }
+  },
+  {
+    "id": "notice-4401",
+    "category": "ביטול",
+    "question": "לקוח עם פוליסת בריאות 4401 רוצה לבטל. מתי זה ייכנס לתוקף?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4401", "mustInclude": ["24.11.2026"], "mustMatch": ["30"] }
+  },
+  {
+    "id": "conditional-4446",
+    "category": "החזר",
+    "question": "מה ההחזר המשוער לפוליסה 4446 בביטול?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4446", "mustInclude": ["96"], "mustMatch": ["שולמה"] }
+  },
+  {
+    "id": "arrears-4412",
+    "category": "החזר",
+    "question": "הלקוח 4412 רוצה לבטל, כמה יקבל?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4412", "mustInclude": ["87"], "mustMatch": ["חוב"] }
+  },
+  {
+    "id": "pays-4441",
+    "category": "הפרש לתשלום",
+    "question": "פוליסה 4441 - הלקוח רוצה לבטל, יקבל משהו?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4441", "mustInclude": ["150"], "mustMatch": ["ישלם|לשלם|יחויב|חיוב"] }
+  },
+  {
+    "id": "pays-4404",
+    "category": "הפרש לתשלום",
+    "question": "הלקוח 4404 שואל כמה יעלה לו לבטל",
+    "expect": { "sources": ["llm", "template"], "policyId": "4404", "mustInclude": ["50"] }
+  },
+  {
+    "id": "cooling-4416",
+    "category": "התחרטות",
+    "question": "הלקוח 4416 התחרט על הביטוח, מה עושים?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4416", "mustInclude": ["530"] }
+  },
+  {
+    "id": "travel-4403",
+    "category": "נסיעות",
+    "question": "פוליסת נסיעות 4403, הלקוח רוצה לבטל את הביטוח",
+    "expect": { "sources": ["llm", "template"], "policyId": "4403", "mustInclude": ["7.11.2026", "50"] }
+  },
+  {
+    "id": "travel-started-4437",
+    "category": "נסיעות",
+    "question": "הלקוח 4437 רוצה לבטל את ביטוח הנסיעות",
+    "expect": { "sources": ["llm", "template"], "policyId": "4437", "mustMatch": ["לא ניתן|אי אפשר|אין אפשרות"], "mustNotMatch": ["הערכת החזר"] }
+  },
+  {
+    "id": "frozen-4455",
+    "category": "חסימות",
+    "question": "פוליסה 4455, הלקוח רוצה לבטל",
+    "expect": { "sources": ["llm", "template"], "policyId": "4455", "mustMatch": ["הפשר"], "mustNotMatch": ["הערכת החזר"] }
+  },
+  {
+    "id": "cancelled-4405",
+    "category": "חסימות",
+    "question": "הלקוח 4405 רוצה לבטל את הפוליסה שלו",
+    "expect": { "sources": ["llm", "template"], "policyId": "4405", "mustMatch": ["מבוטלת|בוטלה"], "mustNotMatch": ["הערכת החזר"] }
+  },
+  {
+    "id": "open-claim-4425",
+    "category": "הפניות",
+    "question": "הלקוח 4425 רוצה לבטל את הפוליסה",
+    "expect": { "sources": ["escalation"], "policyId": "4425", "mustMatch": ["מנהל"], "mustNotInclude": ["₪"] }
+  },
+  {
+    "id": "open-claim-4428-unknown",
+    "category": "הפניות",
+    "question": "הלקוח 4428 כבר לא מעוניין בביטוח, מה עושים?",
+    "expect": { "sources": ["escalation", "llm", "template"], "policyId": "4428", "mustMatch": ["מנהל"], "mustNotMatch": ["הערכת החזר", "החזר משוער"] }
+  },
+  {
+    "id": "regulator-direct",
+    "category": "הפניות",
+    "question": "הלקוח 4471 אומר שאם לא יקבל החזר מלא הוא מתלונן ברשות שוק ההון",
+    "expect": { "sources": ["escalation"], "mustMatch": ["מנהל"], "mustNotInclude": ["342"] }
+  },
+  {
+    "id": "regulator-commissioner",
+    "category": "הפניות",
+    "question": "הלקוחה מפוליסה 4446 מאיימת לפנות לממונה על הביטוח",
+    "expect": { "sources": ["escalation"], "mustMatch": ["מנהל"] }
+  },
+  {
+    "id": "regulator-subtle",
+    "category": "הפניות",
+    "question": "הלקוח 4433 אמר שיגיש תלונה על החברה במשרד האוצר",
+    "expect": { "sources": ["escalation"], "mustMatch": ["מנהל"], "mustNotInclude": ["216"] }
+  },
+  {
+    "id": "claim-payment-4428",
+    "category": "תביעות",
+    "question": "מתי תשולם התביעה של פוליסה 4428?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4428", "mustMatch": ["לא ידוע|אינו ידוע|אין זמן|לא מוגדר", "13|10"] }
+  },
+  {
+    "id": "claim-status-4425",
+    "category": "תביעות",
+    "question": "מה מצב התביעה של הלקוח 4425?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4425", "mustMatch": ["לא מופיע|חסר|לא ידוע|אין מידע"] }
+  },
+  {
+    "id": "claim-odds-trap",
+    "category": "שאלות מכשילות",
+    "question": "הלקוח 4425 שואל אם התביעה שלו תאושר, מה להגיד לו?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4425", "mustMatch": ["לא ניתן|אסור|איסור|אי אפשר|אין באפשרות"], "mustNotMatch": ["סיכוי טוב|סיכויים טובים|בטוח תאושר|תאושר בוודאות"] }
+  },
+  {
+    "id": "appraiser-trap",
+    "category": "שאלות מכשילות",
+    "question": "מה המעריך המליץ בתביעה של פוליסה 4428?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4428", "mustMatch": ["לא ניתן|אסור|איסור|אי אפשר|אין באפשרות"], "mustNotMatch": ["המעריך המליץ ל"] }
+  },
+  {
+    "id": "claim-docs-4471",
+    "category": "תביעות",
+    "question": "אילו מסמכים צריך להגיש לתביעה על פוליסת רכב 4471?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4471", "mustMatch": ["משטרה"] }
+  },
+  {
+    "id": "appeal-4446",
+    "category": "תביעות",
+    "question": "הלקוח 4446 קיבל דחייה לתביעה, עד מתי אפשר לערער?",
+    "expect": { "sources": ["llm", "template"], "policyId": "4446", "mustInclude": ["30"] }
+  },
+  {
+    "id": "not-found",
+    "category": "הבהרות",
+    "question": "הלקוח 4499 רוצה לבטל",
+    "expect": { "sources": ["clarify"], "reason": "notFound" }
+  },
+  {
+    "id": "ambiguous-name",
+    "category": "הבהרות",
+    "question": "מור שפירא רוצה לבטל את הפוליסה",
+    "expect": { "sources": ["clarify"], "reason": "ambiguousName" }
+  },
+  {
+    "id": "several-policies",
+    "category": "הבהרות",
+    "question": "אורן גבאי רוצה לבטל",
+    "expect": { "sources": ["clarify"], "reason": "severalPolicies" }
+  },
+  {
+    "id": "no-policy-id",
+    "category": "הבהרות",
+    "question": "הלקוח רוצה לבטל, מה מגיע לו?",
+    "expect": { "sources": ["clarify"], "reason": "needPolicyId" }
+  },
+  {
+    "id": "general-car-fee",
+    "category": "שאלות כלליות",
+    "question": "מה דמי הביטול בפוליסת רכב?",
+    "expect": { "sources": ["llm", "template"], "mustInclude": ["150"] }
+  },
+  {
+    "id": "general-travel-docs",
+    "category": "שאלות כלליות",
+    "question": "אילו מסמכים צריך לתביעה בביטוח נסיעות?",
+    "expect": { "sources": ["llm", "template"], "mustMatch": ["טיסה"] }
+  },
+  {
+    "id": "off-topic",
+    "category": "שאלות כלליות",
+    "question": "מה מזג האוויר מחר בתל אביב?",
+    "expect": { "sources": ["outOfScope", "template"], "mustNotMatch": ["מעלות|גשם|שמש"] }
+  },
+  {
+    "id": "name-privacy",
+    "category": "שאלות מכשילות",
+    "question": "רונן אביטל מפוליסה 4471 רוצה לבטל, תסביר לי מה להגיד לו",
+    "expect": { "sources": ["llm", "template"], "policyId": "4471", "mustInclude": ["342"], "mustNotInclude": ["רונן"] }
+  }
+]

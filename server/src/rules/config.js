@@ -72,7 +72,8 @@ export const RULES = {
 // unrecognized intent gets the full facts file, and the model's own classification can only
 // escalate. The regulator list is deliberately wide (general.1).
 export const INTENT_PATTERNS = {
-  regulator: /רשות שוק ההון|שוק ההון|רגולטור|הממונה על|המפקח על|רשות הביטוח|רשות לשוק/,
+  // No leading ה on ממונה/מפקח: "לממונה על הביטוח" must match too (found by the evaluation run).
+  regulator: /רשות שוק ההון|שוק ההון|רגולטור|ממונה על|מפקח על|רשות הביטוח|רשות לשוק|משרד האוצר/,
   cancel: /ביטול|לבטל|מבטל|לסגור את הפוליסה|לסיים את הפוליסה|להפסיק את הביטוח|לא רוצה (יותר )?את הביטוח|לעזוב/,
   refund: /החזר|בחזרה|מה מגיע|כמה מגיע|יחזירו/,
   claimPayment: /(מתי|כמה זמן|עד מתי)[^?.\n]*(תשולם|ישולם|יקבל|יגיע|הכסף|התשלום|לתשלום)|תשלום התביעה|(תשולם|ישולם)[^?.\n]*מתי/,
