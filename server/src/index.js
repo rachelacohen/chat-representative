@@ -22,26 +22,6 @@ const requireAdmin = (req, res, next) =>
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-app.get('/api/tasks', (_req, res) => res.json(store.list('tasks')));
-
-app.post('/api/tasks', (req, res) => {
-  const title = String(req.body?.title ?? '').trim();
-  if (!title) return res.status(400).json({ error: 'title is required' });
-  res.status(201).json(store.create('tasks', { title, done: false }));
-});
-
-app.patch('/api/tasks/:id', (req, res) => {
-  const patch = {};
-  if (typeof req.body?.title === 'string') patch.title = req.body.title.trim();
-  if (typeof req.body?.done === 'boolean') patch.done = req.body.done;
-  const task = store.update('tasks', req.params.id, patch);
-  task ? res.json(task) : res.status(404).json({ error: 'not found' });
-});
-
-app.delete('/api/tasks/:id', (req, res) => {
-  store.remove('tasks', req.params.id) ? res.status(204).end() : res.status(404).json({ error: 'not found' });
-});
-
 app.get('/api/audit', requireAdmin, (req, res) => {
   const { entityType, entityId, limit } = req.query;
   res.json(store.listAudit({ entityType, entityId, limit: Number(limit) || 100 }));

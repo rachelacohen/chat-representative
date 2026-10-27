@@ -86,6 +86,7 @@ test('the model flags can only make the answer stricter', async () => {
   const { drafter: unclear } = fakeModel({ answer: 'לא ברור', intent: 'unclear' });
   const result = await service(unclear).chat.answer('פוליסה 4471, מה איתו?');
   assert.equal(result.source, 'clarify');
+  assert.equal(result.reason, 'intent');
   assert.equal(result.answer, FIXED_ANSWERS.clarifyIntent);
 });
 
@@ -105,7 +106,10 @@ test('questions that need a policy get a clarification, never a guess', async ()
   const { chat } = service(null);
   assert.equal((await chat.answer('פוליסה 9999 רוצה לבטל')).answer, FIXED_ANSWERS.notFound('9999'));
   assert.equal((await chat.answer('מור שפירא רוצה לבטל')).answer, FIXED_ANSWERS.ambiguousName);
-  assert.match((await chat.answer('אורן גבאי רוצה לבטל')).answer, /4418 רכב, 4433 דירה/);
+  const several = await chat.answer('אורן גבאי רוצה לבטל');
+  assert.match(several.answer, /4418 רכב, 4433 דירה/);
+  assert.equal(several.reason, 'severalPolicies');
+  assert.deepEqual(several.options, [{ policyId: '4418', product: 'car' }, { policyId: '4433', product: 'home' }]);
   assert.equal((await chat.answer('הלקוח רוצה לבטל, מה מגיע לו?')).answer, FIXED_ANSWERS.needPolicyId);
 });
 

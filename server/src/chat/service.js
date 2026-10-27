@@ -42,15 +42,23 @@ export function createChatService({ repo, drafter = null, asOf = PILOT_AS_OF, po
     const reply = (source, answer, extra = {}) => ({ source, answer, intent: trace.intent, asOf, ...extra });
     trace.intent = detectIntent(question);
 
-    if (mentionsRegulator(question)) {
-      return reply('escalation', FIXED_ANSWERS.regulator, { citations: citationsFor(null, null, ['general.1']) });
-    }
+    // `reason` tells the screen which kind of stop this is (and which buttons to offer).
+    const regulatorReply = () =>
+      reply('escalation', FIXED_ANSWERS.regulator, { reason: 'regulator', citations: citationsFor(null, null, ['general.1']) });
+    if (mentionsRegulator(question)) return regulatorReply();
 
     const found = await resolvePolicy(question, repo);
-    if (found.status === 'notFound') return reply('clarify', FIXED_ANSWERS.notFound(found.policyId));
-    if (found.status === 'ambiguousName') return reply('clarify', FIXED_ANSWERS.ambiguousName);
-    if (found.status === 'severalPolicies') return reply('clarify', FIXED_ANSWERS.severalPolicies(found.policies));
-    if (found.status === 'none' && isAboutCustomer(question)) return reply('clarify', FIXED_ANSWERS.needPolicyId);
+    if (found.status === 'notFound') return reply('clarify', FIXED_ANSWERS.notFound(found.policyId), { reason: 'notFound' });
+    if (found.status === 'ambiguousName') return reply('clarify', FIXED_ANSWERS.ambiguousName, { reason: 'ambiguousName' });
+    if (found.status === 'severalPolicies') {
+      return reply('clarify', FIXED_ANSWERS.severalPolicies(found.policies), {
+        reason: 'severalPolicies',
+        options: found.policies.map((p) => ({ policyId: p.policyId, product: p.product })),
+      });
+    }
+    if (found.status === 'none' && isAboutCustomer(question)) {
+      return reply('clarify', FIXED_ANSWERS.needPolicyId, { reason: 'needPolicyId' });
+    }
 
     let facts = null;
     if (found.status === 'found') {
@@ -70,7 +78,8 @@ export function createChatService({ repo, drafter = null, asOf = PILOT_AS_OF, po
       withFacts('template', facts ? safeAnswer(facts, trace.intent) : FIXED_ANSWERS.generalUnavailable, extra);
 
     // Open claim + cancellation: the manager decides, so the model is never asked for amounts.
-    if (isOpenClaimCancellation(facts, trace.intent)) return withFacts('escalation', safeAnswer(facts, 'cancel'));
+    const managerReply = () => withFacts('escalation', safeAnswer(facts, 'cancel'), { reason: 'openClaims' });
+    if (isOpenClaimCancellation(facts, trace.intent)) return managerReply();
     if (!drafter) return template();
 
     let draft;
@@ -86,15 +95,13 @@ export function createChatService({ repo, drafter = null, asOf = PILOT_AS_OF, po
     }
 
     // The model's classification can only make the answer stricter, never looser.
-    if (draft.regulatorMention) {
-      return reply('escalation', FIXED_ANSWERS.regulator, { citations: citationsFor(null, null, ['general.1']) });
-    }
-    if (!draft.inScope) return reply('outOfScope', FIXED_ANSWERS.offTopic);
+    if (draft.regulatorMention) return regulatorReply();
+    if (!draft.inScope) return reply('outOfScope', FIXED_ANSWERS.offTopic, { reason: 'offTopic' });
     if (trace.intent === 'unknown') {
-      if (draft.intent === 'unclear') return reply('clarify', FIXED_ANSWERS.clarifyIntent);
+      if (draft.intent === 'unclear') return reply('clarify', FIXED_ANSWERS.clarifyIntent, { reason: 'intent' });
       trace.intent = MODEL_INTENTS[draft.intent] ?? draft.intent;
     }
-    if (isOpenClaimCancellation(facts, trace.intent)) return withFacts('escalation', safeAnswer(facts, 'cancel'));
+    if (isOpenClaimCancellation(facts, trace.intent)) return managerReply();
 
     const guard = checkAnswer(draft.answer, facts, { intent: trace.intent, allowed: facts ? undefined : generalAllowed });
     trace.guard = guard;

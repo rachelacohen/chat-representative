@@ -1,6 +1,6 @@
 # Node + React
 
-פרויקט קטן: שרת Express (Node) + לקוח React (Vite), עם רשימת משימות לדוגמה.
+צ'אט לנציגי שירות: שרת Express (Node) + לקוח React (Vite). התיעוד המלא יעודכן בשלב האחרון.
 
 ```
 node-react-app/
@@ -29,13 +29,11 @@ npm run dev                          # שרת + לקוח יחד
 | Method | Path             | תיאור                         |
 | ------ | ---------------- | ----------------------------- |
 | GET    | /api/health      | בדיקת חיים                    |
-| GET    | /api/tasks       | כל המשימות                    |
-| POST   | /api/tasks       | `{ title }`                   |
-| PATCH  | /api/tasks/:id   | `{ title?, done? }`           |
-| DELETE | /api/tasks/:id   | מחיקה                         |
+| POST   | /api/chat        | `{ question }`                |
+| GET    | /api/chat/log    | לוג הצ'אט (דורש `x-admin-token`) |
 | GET    | /api/audit       | לוג אודיט (דורש `x-admin-token`) |
 
-`/api/audit` מקבל `?entityType=Task&entityId=...&limit=100`.
+`/api/audit` מקבל `?entityType=...&entityId=...&limit=100`.
 
 ## מדיניות אודיט לוג
 

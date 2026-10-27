@@ -13,7 +13,9 @@ const AUDIT_FILE = path.join(DATA_DIR, 'audit.jsonl');
 const CHAT_LOG_FILE = path.join(DATA_DIR, 'chat-log.jsonl');
 
 // collection -> audited entityType. A collection missing here cannot be read or written.
-const AUDITED = { tasks: 'Task' };
+// Empty for now: the pilot has no editable business data (policies are read-only); a new
+// collection must be registered here to get audit entries.
+const AUDITED = {};
 
 const SECRET_KEY = /pass(word)?|token|secret|api[-_]?key|card|cvv/i;
 

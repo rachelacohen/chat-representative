@@ -1,7 +1,22 @@
 :root {
+  --text: #1f2937;
+  --muted: #6b7280;
+  --page: #f3f4f6;
+  --card: #fff;
+  --border: #e5e7eb;
+  --accent: #2563eb;
+  --ok-bg: #ecfdf5;
+  --ok-text: #065f46;
+  --info-bg: #eff6ff;
+  --info-text: #1e40af;
+  --warn-bg: #fff7ed;
+  --warn-text: #9a3412;
+  --ask-bg: #fefce8;
+  --ask-text: #854d0e;
+  --muted-bg: #f3f4f6;
   font-family: system-ui, 'Segoe UI', Arial, sans-serif;
-  color: #1f2937;
-  background: #f3f4f6;
+  color: var(--text);
+  background: var(--page);
 }
 
 body {
@@ -9,78 +24,172 @@ body {
 }
 
 .app {
-  max-width: 480px;
-  margin: 48px auto;
-  padding: 24px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgb(0 0 0 / 0.08);
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 24px 16px 140px;
 }
 
-h1 {
-  margin-top: 0;
+header h1 {
+  margin: 0 0 4px;
   font-size: 1.5rem;
 }
 
-.add-form {
-  display: flex;
-  gap: 8px;
+header p {
+  margin: 0 0 20px;
+  color: var(--muted);
 }
 
-.add-form input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
+/* Every line decides its own direction, so a line that starts with a number does not flip. */
+.question,
+.answer-text p,
+.answer li,
+textarea {
+  unicode-bidi: plaintext;
+}
+
+.examples p {
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.choices button {
+  background: var(--card);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.conversation article {
+  margin-bottom: 20px;
+}
+
+/* Keeps the newest answer clear of the fixed question box when scrolling to it. */
+.scroll-end {
+  scroll-margin-bottom: 120px;
+}
+
+.question {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin: 0 0 8px auto;
+  max-width: 85%;
+  width: fit-content;
+  white-space: pre-wrap;
+}
+
+.answer {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.answer.loading {
+  color: var(--muted);
+}
+
+.answer.error {
+  border-color: var(--warn-text);
+}
+
+.answer-text p {
+  margin: 0 0 6px;
+  line-height: 1.6;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.8rem;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.badge.tone-ok { background: var(--ok-bg); color: var(--ok-text); }
+.badge.tone-info { background: var(--info-bg); color: var(--info-text); }
+.badge.tone-warn { background: var(--warn-bg); color: var(--warn-text); }
+.badge.tone-ask { background: var(--ask-bg); color: var(--ask-text); }
+.badge.tone-muted { background: var(--muted-bg); color: var(--muted); }
+
+.notice {
+  font-size: 0.9rem;
+  color: var(--warn-text);
+  background: var(--warn-bg);
+  padding: 6px 10px;
   border-radius: 8px;
-  font-size: 1rem;
+}
+
+.missing {
+  background: var(--ask-bg);
+  color: var(--ask-text);
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-top: 10px;
+}
+
+.missing ul,
+details ul {
+  margin: 4px 0 0;
+  padding-inline-start: 20px;
+}
+
+details {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+details summary {
+  cursor: pointer;
+}
+
+details p {
+  margin: 6px 0 0;
 }
 
 button {
   padding: 8px 14px;
   border: none;
   border-radius: 8px;
-  background: #2563eb;
+  background: var(--accent);
   color: #fff;
   font-size: 1rem;
   cursor: pointer;
 }
 
-.tasks {
-  list-style: none;
-  padding: 0;
-  margin: 16px 0 0;
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
-.tasks li {
+.ask-form {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.tasks li label {
-  display: flex;
-  align-items: center;
   gap: 8px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  background: var(--page);
+  border-top: 1px solid var(--border);
+  box-sizing: border-box;
 }
 
-.tasks li button {
-  background: transparent;
-  color: #9ca3af;
-  padding: 4px 8px;
-}
-
-.tasks li.done label {
-  text-decoration: line-through;
-  color: #9ca3af;
-}
-
-.tasks li.empty {
-  color: #9ca3af;
-  justify-content: center;
-}
-
-.error {
-  color: #dc2626;
+.ask-form textarea {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font: inherit;
+  resize: none;
 }
