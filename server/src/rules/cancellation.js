@@ -13,6 +13,7 @@ export function assessCancellation(policy, { asOf, seniority, otherPolicies }) {
     blockedReason: null,
     referTo: null,
     coolingOff: false,
+    coolingOffDays: RULES.coolingOffDays,
     effectiveDate: null,
     noticeDays: null,
     lastCancellationDate: null,
@@ -83,7 +84,12 @@ export function assessCancellation(policy, { asOf, seniority, otherPolicies }) {
     if (notice) {
       result.noticeDays = notice.days;
       result.effectiveDate = addDays(asOf, notice.days);
-      result.disclosures.push({ key: 'noticePeriod', days: notice.days, source: notice.source });
+      result.disclosures.push({
+        key: 'noticePeriod',
+        days: notice.days,
+        startedBefore: notice.startedBefore,
+        source: notice.source,
+      });
       result.sources.push(notice.source);
     } else {
       result.effectiveDate = endOfMonth(asOf);
@@ -93,10 +99,16 @@ export function assessCancellation(policy, { asOf, seniority, otherPolicies }) {
     const override = RULES.feeOverrides.find((o) => o.product === policy.product);
     result.fee = override
       ? { amount: override.amount, source: override.source }
-      : { amount: seniority.totalMonths >= RULES.fee.freeFromMonths ? 0 : RULES.fee.amount, source: 'cancel.4' };
+      : {
+          amount: seniority.totalMonths >= RULES.fee.freeFromMonths ? 0 : RULES.fee.amount,
+          freeFromMonths: RULES.fee.freeFromMonths,
+          source: 'cancel.4',
+        };
 
     result.bonus = loyaltyBonus(policy, seniority);
-    if (result.bonus.conditional) result.missing.push({ key: 'paidClaimsLast12Months', source: 'refund.3' });
+    if (result.bonus.conditional) {
+      result.missing.push({ key: 'paidClaimsLast12Months', months: RULES.bonusNeedsNoPaidClaim.months, source: 'refund.3' });
+    }
 
     // Billing is monthly, so nothing is prepaid past the effective date.
     result.proRata = 0;
@@ -108,7 +120,13 @@ export function assessCancellation(policy, { asOf, seniority, otherPolicies }) {
     } else if (daysBetween(policy.lastPaymentDate, asOf) > RULES.arrearsAfterDays) {
       result.beforeDebtOffset = true;
       result.missing.push({ key: 'debtAmount', source: 'cancel.7' });
-      result.disclosures.push({ key: 'arrearsOffset', referTo: 'collections', source: 'cancel.7' });
+      result.disclosures.push({
+        key: 'arrearsOffset',
+        daysSinceLastPayment: daysBetween(policy.lastPaymentDate, asOf),
+        afterDays: RULES.arrearsAfterDays,
+        referTo: 'collections',
+        source: 'cancel.7',
+      });
       result.sources.push('cancel.7');
     }
   }

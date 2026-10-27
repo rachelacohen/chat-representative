@@ -67,3 +67,48 @@ export const RULES = {
     },
   },
 };
+
+// Hebrew keyword patterns the answer guard uses. They are heuristics: a miss on a good
+// answer only costs a fallback to the safe template, so they lean strict. Patterns with
+// the g flag are only used with matchAll.
+export const GUARD_PATTERNS = {
+  latin: /[A-Za-z]+/,
+  estimate: /הערכ|משוער|מוערך/,
+  missing: /חסר|לא מופיע|לא ידוע|אין (לנו )?(נתון|מידע)|לא קיים בנתונים/,
+  manager: /מנהל/,
+  cancellationTopic: /ביטול|לבטל|החזר/,
+  claimsTopic: /תביע/,
+  policyMention: /פוליס\S*\s+(?:מספר\s+)?(\d{3,})/g,
+  feeMention: /דמי\s+ה?ביטול/g,
+  noFee: /(אין|בלי|ללא|לא יהיו|פטור מ)\s*דמי\s+ה?ביטול/,
+  refundMention: /החזר/g,
+  paymentWords: /ישולם|תשולם|יועבר|תשלום|הכסף/,
+  paymentUnknown: /לא ידוע|אין זמן|לא מוגדר|לא נקבע|אין מועד/,
+  claimStatusTalk: /שלב|מתי|ישולם|תשולם|תשלום|זמן/,
+  claimAmountTopic: /תביע|פיצוי/,
+  negation: /לא|אין|אינ|אסור|אי אפשר/,
+  odds: [
+    /סיכוי/g,
+    /המלצ\S*\s+(?:של\s+)?המעריך|המעריך\s+(?:המליץ|ממליץ)/g,
+    /(?:בטוח|בוודאות|ודאי)[^.\n]{0,20}(?:יאושר|תאושר)/g,
+  ],
+  missingChecks: {
+    paidClaimsLast12Months: /שולמה/,
+    debtAmount: /חוב[^.\n]*(חסר|לא מופיע|לא ידוע|אין)|(חסר|לא מופיע|לא ידוע|אין)[^.\n]*חוב/,
+    lastPaymentDate: /חסר|לא מופיע|לא ידוע/,
+  },
+  disclosureChecks: {
+    writtenRequest: /בכתב/,
+    multiPolicyDiscountLoss: /הנח/,
+    noticePeriod: /הודעה מראש|30 (יום|ימים)/,
+    customerPays: /ישלם|לשלם|יחויב|חיוב/,
+    arrearsOffset: /חוב/,
+    unfreezeFirst: /הפשר/,
+  },
+  blockedChecks: {
+    alreadyCancelled: /מבוטלת|בוטלה/,
+    frozen: /מוקפא|הקפאה/,
+    tripStarted: /(לא ניתן|אי אפשר|אין אפשרות)[^.\n]{0,15}לבטל/,
+    missingData: /חסר|לא מופיע|לא ידוע/,
+  },
+};
