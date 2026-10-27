@@ -1,0 +1,58 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import express from 'express';
+import { runWithActor } from './context.js';
+import * as store from './store.js';
+
+// Not plain PORT: tools that launch the dev stack often set PORT for the Vite client.
+const PORT = process.env.API_PORT || 3001;
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN;
+
+const app = express();
+app.use(express.json());
+
+// No real auth yet: the client identifies itself with x-user-id.
+app.use((req, _res, next) => runWithActor(req.get('x-user-id') || 'anonymous', next));
+
+const requireAdmin = (req, res, next) =>
+  ADMIN_TOKEN && req.get('x-admin-token') === ADMIN_TOKEN
+    ? next()
+    : res.status(403).json({ error: 'forbidden' });
+
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
+
+app.get('/api/tasks', (_req, res) => res.json(store.list('tasks')));
+
+app.post('/api/tasks', (req, res) => {
+  const title = String(req.body?.title ?? '').trim();
+  if (!title) return res.status(400).json({ error: 'title is required' });
+  res.status(201).json(store.create('tasks', { title, done: false }));
+});
+
+app.patch('/api/tasks/:id', (req, res) => {
+  const patch = {};
+  if (typeof req.body?.title === 'string') patch.title = req.body.title.trim();
+  if (typeof req.body?.done === 'boolean') patch.done = req.body.done;
+  const task = store.update('tasks', req.params.id, patch);
+  task ? res.json(task) : res.status(404).json({ error: 'not found' });
+});
+
+app.delete('/api/tasks/:id', (req, res) => {
+  store.remove('tasks', req.params.id) ? res.status(204).end() : res.status(404).json({ error: 'not found' });
+});
+
+app.get('/api/audit', requireAdmin, (req, res) => {
+  const { entityType, entityId, limit } = req.query;
+  res.json(store.listAudit({ entityType, entityId, limit: Number(limit) || 100 }));
+});
+
+// In production, serve the built React app from the same server.
+const clientDist = path.resolve(import.meta.dirname, '../../client/dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.use((req, res, next) =>
+    req.method === 'GET' && !req.path.startsWith('/api') ? res.sendFile(path.join(clientDist, 'index.html')) : next(),
+  );
+}
+
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

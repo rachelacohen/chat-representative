@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+server/data/
+__MACOSX/
+.DS_Store
+docs/take_home_assignment.pdf
